@@ -4,6 +4,7 @@ package pl.akademiaspecjalistowit.transactionalorder.product;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ class ProductServiceTest {
         //given
         ProductDto exampleProduct = new ProductDto("test1", 45);
         ProductEntity referenceEntity = new ProductEntity(
-            exampleProduct.getName(),
-            exampleProduct.getQuantity());
+                exampleProduct.getName(),
+                exampleProduct.getQuantity());
 
         //when
         productService.addProduct(exampleProduct);
@@ -55,4 +56,5 @@ class ProductServiceTest {
         //when
         assertThat(products).containsExactlyInAnyOrder(exampleProduct);
     }
+
 }

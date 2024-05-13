@@ -4,18 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.akademiaspecjalistowit.transactionalorder.product.ProductDto;
+import pl.akademiaspecjalistowit.transactionalorder.product.ProductEntity;
 import pl.akademiaspecjalistowit.transactionalorder.product.ProductRepository;
 import pl.akademiaspecjalistowit.transactionalorder.product.ProductService;
 
 @SpringBootTest
 class OrderServiceImplTest {
-
+    private final String PRODUCT_NAME = "bread";
+    private final Integer PRODUCT_QUANTITY = 20;
     @Autowired
     private OrderService orderService;
 
@@ -69,7 +72,7 @@ class OrderServiceImplTest {
     public void order_will_not_be_placed_if_product_availability_is_insufficient() {
         //given
         OrderDto validOrderDto = prepareValidOrderDto();
-        productForTestOrderIsAvailableWithQuantity(validOrderDto, validOrderDto.getQuantity() -1);
+        productForTestOrderIsAvailableWithQuantity(validOrderDto, validOrderDto.getQuantity() - 1);
 
         //when
         Executable e = () -> orderService.placeAnOrder(validOrderDto);
@@ -95,14 +98,14 @@ class OrderServiceImplTest {
 
     private void productForTestOrderIsAvailable(OrderDto orderDto) {
         productService.addProduct(new ProductDto(
-            orderDto.getProductName(),
-            orderDto.getQuantity()));
+                orderDto.getProductName(),
+                orderDto.getQuantity()));
     }
 
     private void productForTestOrderIsAvailableWithQuantity(OrderDto orderDto, int quantity) {
         productService.addProduct(new ProductDto(
-            orderDto.getProductName(),
-            quantity));
+                orderDto.getProductName(),
+                quantity));
     }
 
     private void theOrderMatchesInputValues(OrderDto orderDto, OrderEntity orderEntity) {
@@ -129,5 +132,23 @@ class OrderServiceImplTest {
     private OrderDto prepareInvalidOrderDto() {
         int validQuantity = -1;
         return new OrderDto("exampleProduct", validQuantity);
+    }
+
+    @Test
+    public void should_remove_product_if_quantity_is_zero() {
+        //given
+        ProductEntity productEntity = prepareProductTest();
+        productRepository.save(productEntity);
+        OrderDto orderDto = new OrderDto(PRODUCT_NAME, PRODUCT_QUANTITY);
+        orderService.placeAnOrder(orderDto);
+        //when
+        productRepository.removeBoughtOutProducts(PRODUCT_NAME);
+        //then
+        assertThat(productRepository.getProductEntityByName(PRODUCT_NAME).isEmpty());
+
+    }
+
+    private ProductEntity prepareProductTest() {
+        return new ProductEntity("bread", PRODUCT_QUANTITY);
     }
 }
