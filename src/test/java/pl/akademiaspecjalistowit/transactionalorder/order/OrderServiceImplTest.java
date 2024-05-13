@@ -140,9 +140,10 @@ class OrderServiceImplTest {
         ProductEntity productEntity = prepareProductTest();
         productRepository.save(productEntity);
         OrderDto orderDto = new OrderDto(PRODUCT_NAME, PRODUCT_QUANTITY);
+        //when2
         orderService.placeAnOrder(orderDto);
-        //when
-        productRepository.removeBoughtOutProducts(PRODUCT_NAME);
+
+        //productRepository.removeBoughtOutProducts(PRODUCT_NAME);
         //then
         assertThat(productRepository.getProductEntityByName(PRODUCT_NAME).isEmpty());
         assertThat(productRepository.findAll().size()).isEqualTo(0);
