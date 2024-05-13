@@ -145,6 +145,7 @@ class OrderServiceImplTest {
         productRepository.removeBoughtOutProducts(PRODUCT_NAME);
         //then
         assertThat(productRepository.getProductEntityByName(PRODUCT_NAME).isEmpty());
+        assertThat(productRepository.findAll().size()).isEqualTo(0);
 
     }
 
