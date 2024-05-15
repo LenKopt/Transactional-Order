@@ -15,16 +15,17 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String productName;
+    //private String productName;
 
     private Integer quantity;
-    @OneToOne
-    @JoinColumn(name = "product_name_entity", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_name", referencedColumnName = "id")
     private ProductEntity product;
 
-    public OrderEntity(String productName, Integer quantity) {
+    public OrderEntity(ProductEntity product, Integer quantity) {
         validate(quantity);
-        this.productName = productName;
+
+        this.product = product;
         this.quantity = quantity;
     }
 

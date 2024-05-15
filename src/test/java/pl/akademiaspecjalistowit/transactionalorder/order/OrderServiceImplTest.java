@@ -17,8 +17,7 @@ import pl.akademiaspecjalistowit.transactionalorder.product.ProductService;
 
 @SpringBootTest
 class OrderServiceImplTest {
-    private final String PRODUCT_NAME = "bread";
-    private final Integer PRODUCT_QUANTITY = 20;
+
     @Autowired
     private OrderService orderService;
 
@@ -109,7 +108,7 @@ class OrderServiceImplTest {
     }
 
     private void theOrderMatchesInputValues(OrderDto orderDto, OrderEntity orderEntity) {
-        assertThat(orderDto.getProductName()).isEqualTo(orderEntity.getProductName());
+        assertThat(orderDto.getProductName()).isEqualTo(orderEntity.getProduct().getName());
         assertThat(orderDto.getQuantity()).isEqualTo(orderEntity.getQuantity());
     }
 
@@ -129,28 +128,10 @@ class OrderServiceImplTest {
         return new OrderDto("exampleProduct", validQuantity);
     }
 
+
+
     private OrderDto prepareInvalidOrderDto() {
         int validQuantity = -1;
         return new OrderDto("exampleProduct", validQuantity);
-    }
-
-    @Test
-    public void should_remove_product_if_quantity_is_zero() {
-        //given
-        ProductEntity productEntity = prepareProductTest();
-        productRepository.save(productEntity);
-        OrderDto orderDto = new OrderDto(PRODUCT_NAME, PRODUCT_QUANTITY);
-        //when2
-        orderService.placeAnOrder(orderDto);
-
-        //productRepository.removeBoughtOutProducts(PRODUCT_NAME);
-        //then
-        assertThat(productRepository.getProductEntityByName(PRODUCT_NAME).isEmpty());
-        assertThat(productRepository.findAll().size()).isEqualTo(0);
-
-    }
-
-    private ProductEntity prepareProductTest() {
-        return new ProductEntity("bread", PRODUCT_QUANTITY);
     }
 }

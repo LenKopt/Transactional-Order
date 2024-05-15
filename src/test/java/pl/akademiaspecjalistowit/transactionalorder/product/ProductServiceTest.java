@@ -9,12 +9,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import pl.akademiaspecjalistowit.transactionalorder.order.OrderDto;
+import pl.akademiaspecjalistowit.transactionalorder.order.OrderService;
 
 @SpringBootTest
 class ProductServiceTest {
-
+    private final String PRODUCT_NAME = "bread";
+    private final Integer PRODUCT_QUANTITY = 20;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private ProductRepository productRepository;
@@ -56,5 +61,20 @@ class ProductServiceTest {
         //when
         assertThat(products).containsExactlyInAnyOrder(exampleProduct);
     }
+    @Test
+    public void should_remove_product_if_quantity_is_zero_after_creating_order() {
+        ProductEntity productEntity = prepareProductTest();
+        productRepository.save(productEntity);
+        OrderDto orderDto = new OrderDto(PRODUCT_NAME, PRODUCT_QUANTITY);
+        //when
+        orderService.placeAnOrder(orderDto);
 
+        //then
+        assertThat(productRepository.getProductEntityByName(PRODUCT_NAME).isEmpty());
+        assertThat(productRepository.findAll().size()).isEqualTo(0);
+    }
+
+    private ProductEntity prepareProductTest() {
+        return new ProductEntity("bread", PRODUCT_QUANTITY);
+    }
 }
