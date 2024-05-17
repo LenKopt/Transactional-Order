@@ -33,8 +33,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void removeAnOrder(Long id) {
         OrderEntity orderEntity = orderRepository.findById(id).orElseThrow(() -> new OrderServiceException("Nie mamy takiego zamówienia"));
-        List<ProductEntity> productEntityList = orderEntity.getProductEntityList();
-        productEntityList.forEach(e -> e.returnProductAfterDeletionOrder(orderEntity));
+        orderPlacedEventListener.removeProductFromDeletedOrder(orderEntity);
         orderRepository.deleteById(id);
     }
 

@@ -54,4 +54,10 @@ public class ProductServiceImpl implements ProductService, ProductReadService, O
     public void removeAllProductsWithzZeroQuantity() {
         removeAllBoughtProducts();
     }
+
+    @Override
+    public void removeProductFromDeletedOrder(OrderEntity orderEntity) {
+        List<ProductEntity> productEntityList = orderEntity.getProductEntityList();
+        productEntityList.forEach(e -> e.returnProductAfterDeletionOrder(orderEntity));
+    }
 }
