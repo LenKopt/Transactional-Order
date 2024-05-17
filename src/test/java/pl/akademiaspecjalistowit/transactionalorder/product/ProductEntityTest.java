@@ -17,10 +17,9 @@ class ProductEntityTest {
     public void should_throw_exception_if_product_quantity_is_insufficient() {
         //given
         ProductEntity pizza = new ProductEntity("pizza", 10);
-        OrderEntity pizzaOrder = new OrderEntity(List.of(pizza), 12);
 
         //when
-        Executable e = () -> pizza.applyOrder(pizzaOrder);
+        Executable e = () -> new OrderEntity(List.of(pizza), 12);
 
         //then
         ProductException productException = assertThrows(ProductException.class, e);
