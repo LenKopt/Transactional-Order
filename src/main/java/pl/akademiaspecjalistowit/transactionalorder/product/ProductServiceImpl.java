@@ -2,6 +2,8 @@ package pl.akademiaspecjalistowit.transactionalorder.product;
 
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.persistence.TransactionRequiredException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class ProductServiceImpl implements ProductService, ProductReadService, O
     @Override
     public void addProduct(ProductDto productDto) {
         ProductEntity productEntity =
-            new ProductEntity(productDto.getName(), productDto.getQuantity());
+                new ProductEntity(productDto.getName(), productDto.getQuantity());
 
         productRepository.save(productEntity);
     }
@@ -34,12 +36,28 @@ public class ProductServiceImpl implements ProductService, ProductReadService, O
         return productRepository.getProductEntityByName(productName);
     }
 
-    private void removeBoughtOutProductsByName(String productName){
+    private void removeBoughtOutProductsByName(String productName) {
         productRepository.removeBoughtOutProducts(productName);
     }
 
     @Override
     public void notifyOrderPlaced(OrderEntity orderEntityAfterValidations) {
-        removeBoughtOutProductsByName(orderEntityAfterValidations.getProduct().getName());
+        //removeBoughtOutProductsByName(orderEntityAfterValidations.getProduct().getName());
+    }
+
+    @Override
+    public void removeAllBoughtProducts() {
+        productRepository.removeBoughtProducts();
+    }
+
+    @Override
+    public void removeAllProductsWithzZeroQuantity() {
+        removeAllBoughtProducts();
+    }
+
+    @Override
+    public void removeProductFromDeletedOrder(OrderEntity orderEntity) {
+        List<ProductEntity> productEntityList = orderEntity.getProductEntityList();
+        productEntityList.forEach(e -> e.returnProductAfterDeletionOrder(orderEntity));
     }
 }
