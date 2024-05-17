@@ -16,4 +16,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Modifying
     @Query("DELETE FROM ProductEntity p WHERE p.quantity = 0 AND p.name =:productName")
     void removeBoughtOutProducts(String productName);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM ProductEntity p WHERE p.quantity = 0")
+    void removeBoughtProducts();
 }

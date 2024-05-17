@@ -38,6 +38,12 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.deleteById(id);
     }
 
+    @Override
+    public void implementAnOrder(Long id) {
+        orderRepository.deleteById(id);
+        orderPlacedEventListener.removeAllProductsWithzZeroQuantity();
+    }
+
     private static void updateProduct(ProductEntity currentProduct, OrderEntity orderEntity) {
         try {
             currentProduct.applyOrder(orderEntity);

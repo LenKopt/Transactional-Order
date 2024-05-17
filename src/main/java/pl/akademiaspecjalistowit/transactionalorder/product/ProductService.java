@@ -7,4 +7,5 @@ public interface ProductService {
     void addProduct(ProductDto productDto);
 
     List<ProductDto> getProducts();
+    void removeAllBoughtProducts();
 }
