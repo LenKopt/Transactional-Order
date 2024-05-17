@@ -1,10 +1,8 @@
 package pl.akademiaspecjalistowit.transactionalorder.product;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,6 +22,8 @@ public class ProductEntity {
     private String name;
 
     private Integer quantity;
+    @ManyToMany(mappedBy = "productEntityList")
+    private List<OrderEntity> orderEntityList;
 
     public ProductEntity(String name, Integer quantity) {
         this.name = name;
@@ -51,6 +51,10 @@ public class ProductEntity {
     public void applyOrder(OrderEntity orderEntity){
         checkAvailabilityForOrder(orderEntity);
         this.quantity -= orderEntity.getQuantity();
+    }
+
+    public void returnProductAfterDeletionOrder(OrderEntity orderEntity){
+        this.quantity += orderEntity.getQuantity();
     }
 
     private void checkAvailabilityForOrder(OrderEntity orderEntity) {
